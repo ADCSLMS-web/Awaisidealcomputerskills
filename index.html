@@ -1,0 +1,2748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ADCS — Aspire Dynamic Charter School</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        /* ============================================================
+                   RESET & BASE
+                   ============================================================ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #c9a94e;
+            --gold-light: #e8d5a3;
+            --gold-dark: #a8893a;
+            --gold-glow: rgba(201, 169, 78, 0.4);
+            --navy: #0a1a2f;
+            --navy-light: #1a2f4a;
+            --navy-dark: #060f1e;
+            --cream: #fbf7ef;
+            --cream-light: #fffcf5;
+            --white: #ffffff;
+            --black: #0d0d0d;
+            --gray: #b0c0d0;
+            --gray-light: #e8edf2;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            --shadow-hover: 0 30px 80px rgba(0, 0, 0, 0.5);
+            --radius: 16px;
+            --radius-sm: 8px;
+            --transition: 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Inter', sans-serif;
+            --glass-bg: rgba(10, 26, 47, 0.65);
+            --glass-border: rgba(201, 169, 78, 0.10);
+            --glass-blur: blur(16px);
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--navy-dark);
+            color: var(--white);
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ----- Night Sky Background (fixed) ----- */
+        #nightSky {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: linear-gradient(180deg,
+                    #0a0e1a 0%,
+                    #0f1a2f 20%,
+                    #16203a 40%,
+                    #1a2a48 60%,
+                    #0f1a2f 80%,
+                    #060d1a 100%);
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* Stars container */
+        #starsContainer {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: white;
+            animation: twinkle var(--duration) ease-in-out infinite alternate;
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+        }
+        .star.dim {
+            opacity: 0.3;
+        }
+        .star.bright {
+            opacity: 0.9;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+        }
+
+        @keyframes twinkle {
+            0% {
+                opacity: var(--min-opacity, 0.15);
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: var(--max-opacity, 1);
+                transform: scale(1.15);
+            }
+        }
+
+        /* Moon */
+        #moon {
+            position: absolute;
+            top: 6%;
+            right: 10%;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #f5f0e1, #e8ddc8, #d4c8b0);
+            box-shadow:
+                0 0 40px rgba(255, 235, 200, 0.15),
+                0 0 80px rgba(255, 235, 200, 0.08),
+                0 0 160px rgba(255, 235, 200, 0.04);
+            animation: moonGlow 4s ease-in-out infinite alternate;
+        }
+        #moon::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 20%;
+            width: 18%;
+            height: 18%;
+            border-radius: 50%;
+            background: rgba(180, 160, 130, 0.15);
+        }
+        #moon::after {
+            content: '';
+            position: absolute;
+            bottom: 20%;
+            right: 25%;
+            width: 12%;
+            height: 12%;
+            border-radius: 50%;
+            background: rgba(180, 160, 130, 0.10);
+        }
+
+        @keyframes moonGlow {
+            0% {
+                box-shadow: 0 0 40px rgba(255, 235, 200, 0.12), 0 0 80px rgba(255, 235, 200, 0.06);
+            }
+            100% {
+                box-shadow: 0 0 60px rgba(255, 235, 200, 0.25), 0 0 120px rgba(255, 235, 200, 0.12), 0 0 200px rgba(255, 235, 200, 0.05);
+            }
+        }
+
+        /* Shooting Stars */
+        .shooting-star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.4);
+            animation: shoot var(--shoot-duration, 3s) linear infinite;
+            opacity: 0;
+        }
+        .shooting-star::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 1.5px;
+            background: linear-gradient(to left, rgba(255, 255, 255, 0.6), transparent);
+            transform-origin: right center;
+        }
+
+        @keyframes shoot {
+            0% {
+                transform: translate(0, 0) rotate(var(--angle, -30deg));
+                opacity: 0;
+            }
+            5% {
+                opacity: 1;
+            }
+            20% {
+                opacity: 1;
+            }
+            30% {
+                opacity: 0;
+                transform: translate(var(--dist-x, -400px), var(--dist-y, 300px)) rotate(var(--angle, -30deg));
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--dist-x, -400px), var(--dist-y, 300px)) rotate(var(--angle, -30deg));
+            }
+        }
+
+        /* ----- All content sits above night sky ----- */
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        img {
+            max-width: 100%;
+            display: block;
+        }
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 28px;
+        }
+
+        /* ----- Glass-morphism sections ----- */
+        .glass-section {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 60px 48px;
+            margin-bottom: 40px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--navy-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold-dark);
+        }
+
+        /* ============================================================
+                   SECTION TITLES
+                   ============================================================ */
+        .section-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+        .section-tag::before {
+            content: '';
+            width: 30px;
+            height: 2px;
+            background: var(--gold);
+            border-radius: 4px;
+        }
+        .section-tag::after {
+            content: '';
+            width: 30px;
+            height: 2px;
+            background: var(--gold);
+            border-radius: 4px;
+        }
+
+        .section-title {
+            font-family: var(--font-serif);
+            font-size: 2.8rem;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 14px;
+            color: var(--white);
+        }
+        .section-title .highlight {
+            color: var(--gold);
+        }
+        .section-title .highlight-2 {
+            color: var(--gold-light);
+        }
+
+        .section-sub {
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.70);
+            max-width: 620px;
+            line-height: 1.8;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 52px;
+        }
+        .section-header .section-sub {
+            margin: 0 auto;
+        }
+
+        /* ============================================================
+                   BUTTONS
+                   ============================================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 36px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font-sans);
+            letter-spacing: 0.3px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--white);
+            box-shadow: 0 8px 30px var(--gold-glow);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 48px var(--gold-glow);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--gold);
+        }
+        .btn-secondary:hover {
+            background: var(--gold);
+            color: var(--navy);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px var(--gold-glow);
+        }
+        .btn-outline-light {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+        }
+        .btn-outline-light:hover {
+            background: var(--white);
+            color: var(--navy);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(255, 255, 255, 0.10);
+        }
+        .btn-gold {
+            background: var(--gold);
+            color: var(--navy);
+        }
+        .btn-gold:hover {
+            background: var(--gold-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px var(--gold-glow);
+        }
+
+        /* ============================================================
+                   NAVBAR
+                   ============================================================ */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            padding: 14px 0;
+            background: rgba(6, 13, 26, 0.85);
+            backdrop-filter: blur(18px) saturate(180%);
+            -webkit-backdrop-filter: blur(18px) saturate(180%);
+            border-bottom: 1px solid rgba(201, 169, 78, 0.08);
+            transition: var(--transition);
+        }
+        .navbar.scrolled {
+            background: rgba(6, 13, 26, 0.96);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+        }
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-family: var(--font-serif);
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+        .logo .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--navy);
+            font-weight: 900;
+            box-shadow: 0 0 30px var(--gold-glow);
+        }
+        .logo span {
+            color: var(--gold);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        .nav-links>li {
+            position: relative;
+        }
+        .nav-links>li>a {
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: 500;
+            font-size: 0.92rem;
+            transition: var(--transition);
+            padding: 6px 0;
+            border-bottom: 2px solid transparent;
+            letter-spacing: 0.3px;
+        }
+        .nav-links>li>a:hover,
+        .nav-links>li>a.active {
+            color: var(--white);
+            border-bottom-color: var(--gold);
+        }
+        .nav-links>li>a .dropdown-arrow {
+            font-size: 0.6rem;
+            margin-left: 4px;
+            transition: var(--transition);
+        }
+        .nav-links>li:hover .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 36px;
+            left: 0;
+            min-width: 220px;
+            background: rgba(6, 13, 26, 0.95);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius-sm);
+            padding: 12px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(12px);
+            transition: var(--transition);
+            border: 1px solid rgba(201, 169, 78, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+        .nav-links>li:hover .dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(4px);
+        }
+        .dropdown li a {
+            display: block;
+            padding: 10px 22px;
+            color: rgba(255, 255, 255, 0.70);
+            font-size: 0.88rem;
+            transition: var(--transition);
+            font-weight: 400;
+        }
+        .dropdown li a:hover {
+            background: rgba(201, 169, 78, 0.08);
+            color: var(--gold);
+            padding-left: 28px;
+        }
+
+        .nav-cta {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            padding: 10px 28px !important;
+            border-radius: 50px !important;
+            font-weight: 600 !important;
+            color: var(--navy) !important;
+            border-bottom: none !important;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px var(--gold-glow);
+        }
+        .nav-cta:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 40px var(--gold-glow);
+            color: var(--navy) !important;
+            border-bottom: none !important;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .hamburger span {
+            width: 30px;
+            height: 2.5px;
+            background: var(--white);
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+        .hamburger.open span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* ============================================================
+                   HERO
+                   ============================================================ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 0 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(201, 169, 78, 0.10);
+            border: 1px solid rgba(201, 169, 78, 0.15);
+            padding: 8px 22px;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--gold-light);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .hero-badge i {
+            font-size: 0.5rem;
+            color: var(--gold);
+            animation: pulseDot 1.8s infinite;
+        }
+        @keyframes pulseDot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.3;
+                transform: scale(0.6);
+            }
+        }
+
+        .hero h1 {
+            font-family: var(--font-serif);
+            font-size: 4.4rem;
+            font-weight: 900;
+            line-height: 1.05;
+            color: var(--white);
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+        .hero h1 .gold-text {
+            color: var(--gold);
+            position: relative;
+        }
+        .hero h1 .gold-text::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--gold);
+            border-radius: 4px;
+            opacity: 0.25;
+        }
+        .hero p {
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.70);
+            max-width: 480px;
+            line-height: 1.8;
+            margin-bottom: 36px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 48px;
+            margin-top: 44px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .hero-stats .stat h3 {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--gold);
+        }
+        .hero-stats .stat p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.45);
+            margin-bottom: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .hero-card-3d {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 32px;
+            border: 1px solid rgba(201, 169, 78, 0.10);
+            padding: 40px 32px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-card-3d::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 20%, rgba(201, 169, 78, 0.05), transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-card-3d .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+        .hero-card-3d .card-header .year {
+            font-size: 0.8rem;
+            color: var(--gold-light);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .hero-card-3d .card-header .badge-new {
+            background: var(--gold);
+            color: var(--navy);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 16px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-card-3d .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 12px;
+        }
+        .hero-card-3d .feature-item {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 14px;
+            padding: 18px 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: var(--transition);
+        }
+        .hero-card-3d .feature-item:hover {
+            background: rgba(201, 169, 78, 0.06);
+            border-color: rgba(201, 169, 78, 0.15);
+            transform: translateY(-2px);
+        }
+        .hero-card-3d .feature-item i {
+            font-size: 2rem;
+            color: var(--gold);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .hero-card-3d .feature-item span {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.70);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        /* ============================================================
+                   SECTIONS — Glass style
+                   ============================================================ */
+        .section-wrapper {
+            padding: 40px 0;
+        }
+
+        /* ============================================================
+                   ABOUT
+                   ============================================================ */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        .about-image {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .about-image .img-placeholder {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: linear-gradient(135deg, rgba(26, 47, 74, 0.6), rgba(10, 26, 47, 0.8));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            color: var(--gold);
+            opacity: 0.5;
+            backdrop-filter: blur(4px);
+        }
+        .about-image .floating-card {
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            background: rgba(6, 13, 26, 0.85);
+            backdrop-filter: blur(16px);
+            padding: 24px 32px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-hover);
+            border-left: 4px solid var(--gold);
+        }
+        .about-image .floating-card h4 {
+            font-family: var(--font-serif);
+            font-size: 1.6rem;
+            color: var(--gold);
+        }
+        .about-image .floating-card p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.60);
+        }
+
+        .about-text p {
+            color: rgba(255, 255, 255, 0.75);
+            margin-bottom: 18px;
+            line-height: 1.8;
+        }
+        .about-text .about-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .about-text .about-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            color: var(--white);
+        }
+        .about-text .about-features li i {
+            color: var(--gold);
+            font-size: 1.2rem;
+        }
+
+        /* ============================================================
+                   ACADEMICS
+                   ============================================================ */
+        .academics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 28px;
+        }
+        .academic-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius);
+            padding: 36px 30px;
+            border: 1px solid rgba(201, 169, 78, 0.06);
+            transition: var(--transition);
+            text-align: center;
+            backdrop-filter: blur(4px);
+        }
+        .academic-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(201, 169, 78, 0.20);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        }
+        .academic-card .icon {
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 16px;
+            display: block;
+        }
+        .academic-card h3 {
+            font-family: var(--font-serif);
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--white);
+        }
+        .academic-card p {
+            color: rgba(255, 255, 255, 0.60);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* ============================================================
+                   ADMISSIONS
+                   ============================================================ */
+        .admissions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        .admissions-content p {
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+        .admissions-content .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: 28px;
+        }
+        .admissions-content .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--gold);
+            transition: var(--transition);
+            backdrop-filter: blur(4px);
+        }
+        .admissions-content .step:hover {
+            transform: translateX(6px);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .admissions-content .step .num {
+            font-family: var(--font-serif);
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--gold);
+            min-width: 40px;
+        }
+        .admissions-content .step .step-content h4 {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--white);
+        }
+        .admissions-content .step .step-content p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.60);
+            margin-bottom: 0;
+        }
+
+        .admissions-form-box {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius);
+            padding: 44px 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(201, 169, 78, 0.06);
+        }
+        .admissions-form-box h3 {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+            color: var(--white);
+        }
+        .admissions-form-box p {
+            color: rgba(255, 255, 255, 0.60);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            color: rgba(255, 255, 255, 0.80);
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 18px;
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.04);
+            transition: var(--transition);
+            color: var(--white);
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 4px rgba(201, 169, 78, 0.06);
+        }
+        .form-group select option {
+            background: var(--navy-dark);
+            color: var(--white);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* ============================================================
+                   FACULTY
+                   ============================================================ */
+        .faculty-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 32px;
+        }
+        .faculty-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            text-align: center;
+            border: 1px solid rgba(201, 169, 78, 0.06);
+            transition: var(--transition);
+            backdrop-filter: blur(4px);
+        }
+        .faculty-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(201, 169, 78, 0.20);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.20);
+        }
+        .faculty-card .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            color: var(--navy);
+            font-weight: 700;
+            box-shadow: 0 0 40px rgba(201, 169, 78, 0.08);
+        }
+        .faculty-card h4 {
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            color: var(--white);
+        }
+        .faculty-card .role {
+            font-size: 0.85rem;
+            color: var(--gold-light);
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+        .faculty-card p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.50);
+            line-height: 1.5;
+        }
+        .faculty-card .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .faculty-card .social-links a {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.40);
+            transition: var(--transition);
+            font-size: 0.85rem;
+        }
+        .faculty-card .social-links a:hover {
+            background: var(--gold);
+            color: var(--navy);
+            transform: translateY(-3px);
+        }
+
+        /* ============================================================
+                   GALLERY
+                   ============================================================ */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        .gallery-item {
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            aspect-ratio: 1/1;
+            background: linear-gradient(135deg, rgba(26, 47, 74, 0.6), rgba(10, 26, 47, 0.8));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: rgba(201, 169, 78, 0.15);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            backdrop-filter: blur(4px);
+        }
+        .gallery-item:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-hover);
+        }
+        .gallery-item .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(6, 13, 26, 0.60);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: var(--transition);
+            color: var(--white);
+            font-size: 1.4rem;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+        }
+        .gallery-item:hover .overlay {
+            opacity: 1;
+        }
+        .gallery-item:nth-child(1) {
+            grid-row: span 2;
+        }
+        .gallery-item:nth-child(6) {
+            grid-column: span 2;
+        }
+
+        /* ============================================================
+                   TESTIMONIALS
+                   ============================================================ */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius);
+            padding: 32px 28px;
+            border: 1px solid rgba(201, 169, 78, 0.06);
+            transition: var(--transition);
+            position: relative;
+            backdrop-filter: blur(4px);
+        }
+        .testimonial-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(201, 169, 78, 0.15);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .testimonial-card .quote-icon {
+            font-size: 2.4rem;
+            color: var(--gold);
+            opacity: 0.20;
+            margin-bottom: 8px;
+        }
+        .testimonial-card p {
+            color: rgba(255, 255, 255, 0.78);
+            font-style: italic;
+            line-height: 1.7;
+            font-size: 0.98rem;
+        }
+        .testimonial-card .author {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .testimonial-card .author .avatar-sm {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--navy);
+            font-size: 1rem;
+        }
+        .testimonial-card .author .info h5 {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--white);
+        }
+        .testimonial-card .author .info span {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        /* ============================================================
+                   NEWS & EVENTS
+                   ============================================================ */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .news-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(201, 169, 78, 0.04);
+            backdrop-filter: blur(4px);
+        }
+        .news-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(201, 169, 78, 0.10);
+        }
+        .news-card .news-img {
+            height: 200px;
+            background: linear-gradient(135deg, rgba(26, 47, 74, 0.6), rgba(10, 26, 47, 0.8));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.6rem;
+            color: rgba(201, 169, 78, 0.12);
+        }
+        .news-card .news-body {
+            padding: 24px 26px 28px;
+        }
+        .news-card .news-body .date {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.50);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .news-card .news-body .date i {
+            color: var(--gold);
+        }
+        .news-card .news-body h4 {
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--white);
+        }
+        .news-card .news-body p {
+            color: rgba(255, 255, 255, 0.60);
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+        .news-card .news-body .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+            font-weight: 600;
+            color: var(--gold);
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+        .news-card .news-body .read-more:hover {
+            gap: 16px;
+            color: var(--gold-light);
+        }
+
+        /* ============================================================
+                   CONTACT
+                   ============================================================ */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+        }
+        .contact-info .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+        .contact-info .info-item .icon-box {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: rgba(201, 169, 78, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .contact-info .info-item h5 {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--white);
+        }
+        .contact-info .info-item p {
+            color: rgba(255, 255, 255, 0.60);
+            font-size: 0.95rem;
+        }
+
+        .contact-form-box {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius);
+            padding: 40px;
+            border: 1px solid rgba(201, 169, 78, 0.06);
+            backdrop-filter: blur(8px);
+        }
+        .contact-form-box h3 {
+            font-family: var(--font-serif);
+            font-size: 1.6rem;
+            color: var(--white);
+            margin-bottom: 6px;
+        }
+        .contact-form-box p {
+            color: rgba(255, 255, 255, 0.50);
+            margin-bottom: 24px;
+        }
+        .contact-form-box .form-group label {
+            color: rgba(255, 255, 255, 0.70);
+        }
+        .contact-form-box .form-group input,
+        .contact-form-box .form-group textarea {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.06);
+            color: var(--white);
+        }
+        .contact-form-box .form-group input:focus,
+        .contact-form-box .form-group textarea:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 4px rgba(201, 169, 78, 0.06);
+        }
+
+        /* ============================================================
+                   FOOTER
+                   ============================================================ */
+        .footer {
+            background: rgba(6, 13, 26, 0.85);
+            backdrop-filter: blur(16px);
+            padding: 60px 0 28px;
+            border-top: 1px solid rgba(201, 169, 78, 0.04);
+            margin-top: 40px;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .footer-brand .logo {
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+        }
+        .footer-brand p {
+            color: rgba(255, 255, 255, 0.50);
+            max-width: 320px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .footer-social {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .footer-social a {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.40);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .footer-social a:hover {
+            background: var(--gold);
+            color: var(--navy);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px var(--gold-glow);
+        }
+
+        .footer-col h5 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 16px;
+        }
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+        .footer-col ul a {
+            color: rgba(255, 255, 255, 0.40);
+            transition: var(--transition);
+            font-size: 0.92rem;
+        }
+        .footer-col ul a:hover {
+            color: var(--gold);
+            padding-left: 4px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            color: rgba(255, 255, 255, 0.30);
+            font-size: 0.85rem;
+        }
+        .footer-bottom a {
+            color: rgba(255, 255, 255, 0.30);
+            transition: var(--transition);
+        }
+        .footer-bottom a:hover {
+            color: var(--gold);
+        }
+
+        /* ============================================================
+                   BACK TO TOP
+                   ============================================================ */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--navy);
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 32px var(--gold-glow);
+            transition: var(--transition);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            z-index: 999;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .back-to-top:hover {
+            transform: scale(1.08);
+            box-shadow: 0 12px 48px var(--gold-glow);
+        }
+
+        /* ============================================================
+                   TOAST
+                   ============================================================ */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            background: rgba(6, 13, 26, 0.92);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(201, 169, 78, 0.12);
+            padding: 16px 28px;
+            border-radius: 12px;
+            color: var(--white);
+            font-weight: 500;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+            transform: translateY(120px);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .toast i {
+            color: var(--gold);
+            font-size: 1.2rem;
+        }
+
+        /* ============================================================
+                   ANIMATIONS
+                   ============================================================ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .reveal-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .reveal-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.92);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .reveal-scale.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .delay-1 {
+            transition-delay: 0.10s;
+        }
+        .delay-2 {
+            transition-delay: 0.20s;
+        }
+        .delay-3 {
+            transition-delay: 0.30s;
+        }
+        .delay-4 {
+            transition-delay: 0.40s;
+        }
+        .delay-5 {
+            transition-delay: 0.50s;
+        }
+
+        /* ============================================================
+                   RESPONSIVE
+                   ============================================================ */
+        @media (max-width: 1200px) {
+            .hero h1 {
+                font-size: 3.6rem;
+            }
+            .hero-grid {
+                gap: 40px;
+            }
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .gallery-item:nth-child(1) {
+                grid-row: span 1;
+            }
+            .gallery-item:nth-child(6) {
+                grid-column: span 1;
+            }
+            #moon {
+                width: 60px;
+                height: 60px;
+                top: 4%;
+                right: 6%;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .hero-grid,
+            .about-grid,
+            .admissions-grid,
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .hero {
+                min-height: auto;
+                padding: 120px 0 60px;
+            }
+            .hero h1 {
+                font-size: 3rem;
+            }
+            .hero-stats {
+                gap: 24px;
+                flex-wrap: wrap;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .glass-section {
+                padding: 40px 28px;
+            }
+            #moon {
+                width: 50px;
+                height: 50px;
+                top: 3%;
+                right: 4%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 300px;
+                height: 100vh;
+                background: rgba(6, 13, 26, 0.97);
+                flex-direction: column;
+                padding: 80px 32px 32px;
+                gap: 20px;
+                transition: var(--transition);
+                border-left: 1px solid rgba(201, 169, 78, 0.06);
+                align-items: stretch;
+            }
+            .nav-links.open {
+                right: 0;
+            }
+            .nav-links>li>a {
+                padding: 10px 0;
+                border-bottom: none;
+            }
+            .dropdown {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                background: rgba(255, 255, 255, 0.02);
+                padding: 4px 0 4px 16px;
+                margin-top: 4px;
+                border: none;
+                box-shadow: none;
+                min-width: auto;
+            }
+            .nav-links>li:hover .dropdown {
+                transform: none;
+            }
+            .nav-links>li:hover .dropdown-arrow {
+                transform: none;
+            }
+            .hamburger {
+                display: flex;
+            }
+            .nav-cta {
+                text-align: center;
+            }
+
+            .hero h1 {
+                font-size: 2.4rem;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+            .about-text .about-features {
+                grid-template-columns: 1fr;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+            .hero-card-3d .feature-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .admissions-form-box {
+                padding: 28px 20px;
+            }
+            .gallery-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .gallery-item:nth-child(6) {
+                grid-column: span 1;
+            }
+            .contact-grid {
+                gap: 32px;
+            }
+            .contact-form-box {
+                padding: 28px 20px;
+            }
+            .glass-section {
+                padding: 32px 18px;
+                border-radius: 12px;
+            }
+
+            .toast {
+                bottom: 80px;
+                right: 16px;
+                left: 16px;
+                padding: 14px 20px;
+            }
+            .back-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 44px;
+                height: 44px;
+                font-size: 1rem;
+            }
+            #moon {
+                width: 40px;
+                height: 40px;
+                top: 2%;
+                right: 3%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            .hero-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .hero-stats {
+                gap: 16px;
+                flex-direction: column;
+            }
+            .hero-card-3d .feature-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .hero-card-3d .feature-item {
+                padding: 12px 10px;
+            }
+            .hero-card-3d .feature-item i {
+                font-size: 1.4rem;
+            }
+            .section-title {
+                font-size: 1.6rem;
+            }
+            .academics-grid {
+                grid-template-columns: 1fr;
+            }
+            .faculty-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+            .gallery-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .gallery-item {
+                aspect-ratio: 1/1;
+            }
+            .gallery-item .overlay {
+                font-size: 1rem;
+            }
+            .hero-card-3d {
+                padding: 24px 18px;
+            }
+            #moon {
+                width: 30px;
+                height: 30px;
+                top: 1%;
+                right: 2%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== NIGHT SKY BACKGROUND ===== -->
+    <div id="nightSky">
+        <div id="starsContainer"></div>
+        <div id="moon"></div>
+        <!-- Shooting stars will be injected by JS -->
+    </div>
+
+    <!-- ===== CONTENT WRAPPER ===== -->
+    <div class="content-wrapper">
+
+        <!-- ============================================================
+        NAVBAR
+        ============================================================ -->
+        <nav class="navbar" id="navbar">
+            <div class="container">
+                <a href="#home" class="logo">
+                    <span class="logo-icon">A</span>
+                    ADCS<span>.</span>
+                </a>
+
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li>
+                        <a href="#academics">
+                            Academics <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        </a>
+                        <ul class="dropdown">
+                            <li><a href="#">Primary School</a></li>
+                            <li><a href="#">Middle School</a></li>
+                            <li><a href="#">High School</a></li>
+                            <li><a href="#">Advanced Programs</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#admissions">Admissions</a></li>
+                    <li><a href="#faculty">Faculty</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                    <li><a href="#news">News</a></li>
+                    <li><a href="#contact" class="nav-cta">Contact Us</a></li>
+                </ul>
+
+                <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- ============================================================
+        HERO
+        ============================================================ -->
+        <section class="hero" id="home">
+            <div class="container">
+                <div class="hero-grid">
+                    <div class="hero-text">
+                        <div class="hero-badge">
+                            <i class="fas fa-circle"></i> Since 2008 · Excellence in Education
+                        </div>
+                        <h1>
+                            Inspiring Minds,<br />
+                            <span class="gold-text">Shaping Futures</span>
+                        </h1>
+                        <p>
+                            At ADCS, we nurture curiosity, foster creativity, and empower
+                            students to become lifelong learners and responsible global citizens.
+                        </p>
+                        <div class="hero-buttons">
+                            <a href="#admissions" class="btn btn-primary">
+                                <i class="fas fa-graduation-cap"></i> Apply Now
+                            </a>
+                            <a href="#about" class="btn btn-outline-light">
+                                <i class="fas fa-play-circle"></i> Discover More
+                            </a>
+                        </div>
+                        <div class="hero-stats">
+                            <div class="stat">
+                                <h3>2500+</h3>
+                                <p>Students</p>
+                            </div>
+                            <div class="stat">
+                                <h3>98%</h3>
+                                <p>Graduation Rate</p>
+                            </div>
+                            <div class="stat">
+                                <h3>50+</h3>
+                                <p>Nations Represented</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hero-visual">
+                        <div class="hero-card-3d">
+                            <div class="card-header">
+                                <span class="year">2025–26</span>
+                                <span class="badge-new">Now Enrolling</span>
+                            </div>
+                            <div style="font-family:var(--font-serif); font-size:1.6rem; font-weight:700; color:var(--white); margin-bottom:4px;">
+                                Welcome to ADCS
+                            </div>
+                            <p style="color:rgba(255,255,255,0.50); font-size:0.92rem; margin-bottom:18px;">
+                                Where every child discovers their potential.
+                            </p>
+                            <div class="feature-grid">
+                                <div class="feature-item">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                    <span>Expert Faculty</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-laptop-code"></i>
+                                    <span>STEM Programs</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-palette"></i>
+                                    <span>Arts &amp; Culture</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-globe-americas"></i>
+                                    <span>Global Exchange</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+        ABOUT
+        ============================================================ -->
+        <div class="section-wrapper">
+            <div class="container">
+                <div class="glass-section" id="about">
+                    <div class="about-grid">
+                        <div class="about-image reveal-left">
+                            <div class="img-placeholder">
+                                <i class="fas fa-school"></i>
+                            </div>
+                            <div class="floating-card">
+                                <h4>16+</h4>
+                                <p>Years of Excellence</p>
+                            </div>
+                        </div>
+                        <div class="about-text reveal-right">
+                            <div class="section-tag">About Us</div>
+                            <h2 class="section-title">
+                                A Legacy of <span class="highlight">Excellence</span>
+                            </h2>
+                            <p>
+                                Aspire Dynamic Charter School (ADCS) is a premier educational institution
+                                dedicated to providing a holistic, student-centered learning environment.
+                                We blend rigorous academics with character development and global awareness.
+                            </p>
+                            <p>
+                                Our approach emphasizes critical thinking, creativity, collaboration, and
+                                compassion — preparing students not just for college, but for life.
+                            </p>
+                            <ul class="about-features">
+                                <li><i class="fas fa-check-circle"></i> Accredited Programs</li>
+                                <li><i class="fas fa-check-circle"></i> Dedicated Mentors</li>
+                                <li><i class="fas fa-check-circle"></i> State-of-the-Art Facilities</li>
+                                <li><i class="fas fa-check-circle"></i> Inclusive Community</li>
+                            </ul>
+                            <a href="#" class="btn btn-primary" style="margin-top:28px;">
+                                <i class="fas fa-book-open"></i> Our Philosophy
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        ACADEMICS
+        ============================================================ -->
+        <div class="section-wrapper">
+            <div class="container">
+                <div class="glass-section" id="academics">
+                    <div class="section-header reveal">
+                        <div class="section-tag">Academics</div>
+                        <h2 class="section-title">
+                            World-Class <span class="highlight">Education</span>
+                        </h2>
+                        <p class="section-sub">
+                            From early childhood to college preparation, our programs inspire
+                            a lifelong love of learning.
+                        </p>
+                    </div>
+                    <div class="academics-grid">
+                        <div class="academic-card reveal delay-1">
+                            <span class="icon"><i class="fas fa-child"></i></span>
+                            <h3>Primary School</h3>
+                            <p>Building strong foundations in literacy, numeracy, and social-emotional skills.</p>
+                        </div>
+                        <div class="academic-card reveal delay-2">
+                            <span class="icon"><i class="fas fa-users"></i></span>
+                            <h3>Middle School</h3>
+                            <p>Exploratory learning across disciplines with emphasis on critical thinking.</p>
+                        </div>
+                        <div class="academic-card reveal delay-3">
+                            <span class="icon"><i class="fas fa-user-graduate"></i></span>
+                            <h3>High School</h3>
+                            <p>Rigorous college-prep curriculum with AP courses and research opportunities.</p>
+                        </div>
+                        <div class="academic-card reveal delay-4">
+                            <span class="icon"><i class="fas fa-microscope"></i></span>
+                            <h3>STEM &amp; Innovation</h3>
+                            <p>Cutting-edge programs in robotics, coding, biotechnology, and environmental science.</p>
+                        </div>
+                        <div class="academic-card reveal delay-5">
+                            <span class="icon"><i class="fas fa-music"></i></span>
+                            <h3>Arts &amp; Humanities</h3>
+                            <p>Music, theater, visual arts, and world languages that develop creativity.</p>
+                        </div>
+                        <div class="academic-card reveal delay-1">
+                            <span class="icon"><i class="fas fa-running"></i></span>
+                            <h3>Athletics &amp; Wellness</h3>
+                            <p>Competitive sports, fitness programs, and wellness education.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        ADMISSIONS
+        ============================================================ -->
+        <div class="section-wrapper">
+            <div class="container">
+                <div class="glass-section" id="admissions">
+                    <div class="admissions-grid">
+                        <div class="admissions-content reveal-left">
+                            <div class="section-tag">Admissions</div>
+                            <h2 class="section-title">
+                                Join the <span class="highlight">ADCS</span> Family
+                            </h2>
+                            <p>
+                                We welcome students of all backgrounds to become part of our vibrant
+                                learning community. Our admissions process is designed to be transparent,
+                                supportive, and accessible.
+                            </p>
+                            <div class="steps">
+                                <div class="step">
+                                    <span class="num">01</span>
+                                    <div class="step-content">
+                                        <h4>Submit Application</h4>
+                                        <p>Complete our online application form with student and family details.</p>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <span class="num">02</span>
+                                    <div class="step-content">
+                                        <h4>Assessment &amp; Interview</h4>
+                                        <p>Meet with our admissions team for an academic assessment and family interview.</p>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <span class="num">03</span>
+                                    <div class="step-content">
+                                        <h4>Enrollment &amp; Welcome</h4>
+                                        <p>Receive your acceptance letter, complete enrollment, and join the ADCS community.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="#" class="btn btn-primary" style="margin-top:24px;">
+                                <i class="fas fa-file-alt"></i> Apply Online
+                            </a>
+                        </div>
+
+                        <div class="admissions-form-box reveal-right">
+                            <h3>Request Information</h3>
+                            <p>Fill in the form and our team will get back to you within 24 hours.</p>
+                            <form id="admissionsForm">
+                                <div class="form-group">
+                                    <label for="fullName">Full Name *</label>
+                                    <input type="text" id="fullName" placeholder="Enter your full name" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="parentEmail">Email Address *</label>
+                                    <input type="email" id="parentEmail" placeholder="Enter email address" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="phoneNumber">Phone Number</label>
+                                    <input type="tel" id="phoneNumber" placeholder="Enter phone number" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="gradeLevel">Grade Level of Interest *</label>
+                                    <select id="gradeLevel" required>
+                                        <option value="">Select grade</option>
+                                        <option value="Pre-K">Pre-K</option>
+                                        <option value="Kindergarten">Kindergarten</option>
+                                        <option value="Grade 1">Grade 1</option>
+                                        <option value="Grade 2">Grade 2</option>
+                                        <option value="Grade 3">Grade 3</option>
+                                        <option value="Grade 4">Grade 4</option>
+                                        <option value="Grade 5">Grade 5</option>
+                                        <option value="Grade 6">Grade 6</option>
+                                        <option value="Grade 7">Grade 7</option>
+                                        <option value="Grade 8">Grade 8</option>
+                                        <option value="Grade 9">Grade 9</option>
+                                        <option value="Grade 10">Grade 10</option>
+                                        <option value="Grade 11">Grade 11</option>
+                                        <option value="Grade 12">Grade 12</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="message">Message</label>
+                                    <textarea id="message" placeholder="Any additional information..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-gold" style="width:100%; justify-content:center;">
+                                    <i class="fas fa-paper-plane"></i> Send Request
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        FACULTY
+        ============================================================ -->
+        <div class="section-wrapper">
+            <div class="container">
+                <div class="glass-section" id="faculty">
+                    <div class="section-header reveal">
+                        <div class="section-tag">Faculty</div>
+                        <h2 class="section-title">
+                            Meet Our <span class="highlight">Educators</span>
+                        </h2>
+                        <p class="section-sub">
+                            Dedicated professionals who inspire, mentor, and guide students toward
+                            their fullest potential.
+                        </p>
+                    </div>
+                    <div class="faculty-grid">
+                        <div class="faculty-card reveal delay-1">
+                            <div class="avatar">JD</div>
+                            <h4>Dr. James Donovan</h4>
+                            <div class="role">Head of School</div>
+                            <p>25 years of leadership in international education.</p>
+                            <div class="social-links">
+                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                            </div>
+                        </div>
+                        <div class="faculty-card reveal delay-2">
+                            <div class="avatar">SM</div>
+                            <h4>Sarah Mitchell</h4>
+                            <div class="role">Director of Academics</div>
+                            <p>Curriculum specialist with a passion for innovative pedagogy.</p>
+                            <div class="social-links">
+                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                            </div>
+                        </div>
+                        <div class="faculty-card reveal delay-3">
+                            <div class="avatar">RC</div>
+                            <h4>Robert Chen</h4>
+                            <div class="role">Head of Mathematics</div>
+                            <p>Award-winning math educator making complex concepts accessible.</p>
+                            <div class="social-links">
+                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                            </div>
+                        </div>
+                        <div class="faculty-card reveal delay-4">
+                            <div class="avatar">AW</div>
+                            <h4>Amara Williams</h4>
+                            <div class="role">Head of Arts</div>
+                            <p>Celebrated artist and educator who nurtures creativity across all ages.</p>
+                            <div class="social-links">
+                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        GALLERY
+        ============================================================ -->
+        <div class="section-wrapper">
+            <div class="container">
+                <div class="glass-section" id="gallery">
+                    <div class="section-header reveal">
+                        <div class="section-tag">Gallery</div>
+                        <h2 class="section-title">
+                            Life at <span class="highlight">ADCS</span>
+                        </h2>
+                        <p class="section-sub">
+                            A glimpse into our vibrant campus, diverse activities, and joyful learning moments.
+                        </p>
+                    </div>
+                    <div class="gallery-grid">
+                        <div class="gallery-item reveal" style="background:linear-gradient(135deg,#1a2f4a,#0a1a2f);">
+                            <i class="fas fa-graduation-cap"></i>
+                            <div class="overlay">Graduation Ceremony</div>
+                        </div>
+                        <div class="gallery-item reveal delay-1" style="background:linear-gradient(135deg,#c9a94e,#a8893a);">
+                            <i class="fas fa-flask" style="color:rgba(255,255,255,0.15);"></i>
+                            <div class="overlay">Science Lab</div>
+                        </div>
+                        <div class="gallery-item reveal delay-2" style="background:linear-gradient(135deg,#2a3f5a,#0a1a2f);">
+                            <i class="fas fa-paint-brush" style="color:rgba(255,255,255,0.15);"></i>
+                            <div class="overlay">Art Studio</div>
+                        </div>
+                        <div class="gallery-item reveal delay-3" style="background:linear-gradient(135deg,#1a2f4a,#0a1a2f);">
+                            <i class="fas fa-futbol"></i>
+                            <div class="overlay">Sports Field</div>
+                        </div>
+                        <div class="gallery-item reveal delay-4" style="background:linear-gradient(135deg,#c9a94e,#a8893a);">
+                            <i class="fas fa-music" style="color:rgba(255,255,255,0.15);"></i>
+                            <div class="overlay">Music &amp; Performance</div>
+                        </div>
+                        <div class="gallery-item reveal delay-5" style="background:linear-gradient(135deg,#1a2f4a,#0a1a2f);">
+                            <i class="fas fa-book-open"></i>
+                            <div class="overlay">Library &amp; Study</div>
+                        </div>
+                        <div class="gallery-item reveal delay-1" style="background:linear-gradient(135deg,#2a3f5a,#0a1a2f);">
+                            <i class="fas fa-users" style="color:rgba(255,255,255,0.15);"></i>
+                            <div class="overlay">Community Events</div>
+                        </div>
+                        <div class="gallery-item reveal delay-2" style="background:linear-gradient(135deg,#c9a94e,#a8893a);">
+                            <i class="fas fa-globe-asia" style="color:rgba(255,255,255,0.15);"></i>
+                            <div class="overlay">Global Exchange</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        TESTIMONIALS
+        ============================================================ -->
+        <div class="section-wrapper">
+            <div class="container">
+                <div class="glass-section" id="testimonials">
+                    <div class="section-header reveal">
+                        <div class="section-tag">Testimonials</div>
+                        <h2 class="section-title">
+                            What Our <span class="highlight">Community</span> Says
+                        </h2>
+                        <p class="section-sub">
+                            Real voices from students, parents, and alumni who have experienced
+                            the ADCS difference.
+                        </p>
+                    </div>
+                    <div class="testimonials-grid">
+                        <div class="testimonial-card reveal delay-1">
+                            <div class="quote-icon"><i class="fas fa-quote-right"></i></div>
+                            <p>"ADCS transformed my daughter's outlook on learning. She's now excited to go to school every day and has developed a genuine love for science and literature."</p>
+                            <div class="author">
+                                <div class="avatar-sm">MR</div>
+                                <div class="info">
+                                    <h5>Maria Rodriguez</h5>
+                                    <span>Parent, Grade 5</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-card reveal delay-2">
+                            <div class="quote-icon"><i class="fas fa-quote-right"></i></div>
+                            <p>"The faculty at ADCS genuinely care about each student's growth. The support I received during my college application process was incredible."</p>
+                            <div class="author">
+                                <div class="avatar-sm">TK</div>
+                                <div class="info">
+                                    <h5>Thomas Kim</h5>
+                                    <span>Alumnus, Class of 2024</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-card reveal delay-3">
+                            <div class="quote-icon"><i class="fas fa-quote-right"></i></div>
+                            <p>"We moved to this city and were nervous about finding the right school. ADCS welcomed us with open arms. Our son has thrived academically and socially."</p>
+                            <div class="author">
+                                <div class="avatar-sm">SC</div>
+                                <div class="info">
+                                    <h5>Sarah &amp; David Chen</h5>
+                                    <span>Parents, Grade 2</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        NEWS & EVENTS
+        ============================================================ -->
+        <div class="section-wrapper">
+            <div class="container">
+                <div class="glass-section" id="news">
+                    <div class="section-header reveal">
+                        <div class="section-tag">News &amp; Events</div>
+                        <h2 class="section-title">
+                            Latest <span class="highlight">Updates</span>
+                        </h2>
+                        <p class="section-sub">
+                            Stay informed about happenings, achievements, and upcoming events at ADCS.
+                        </p>
+                    </div>
+                    <div class="news-grid">
+                        <div class="news-card reveal delay-1">
+                            <div class="news-img">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="news-body">
+                                <div class="date"><i class="far fa-calendar-alt"></i> March 15, 2025</div>
+                                <h4>ADCS Wins National Science Olympiad</h4>
+                                <p>Our team of young scientists secured first place in the National Science Olympiad.</p>
+                                <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="news-card reveal delay-2">
+                            <div class="news-img">
+                                <i class="fas fa-paint-roller"></i>
+                            </div>
+                            <div class="news-body">
+                                <div class="date"><i class="far fa-calendar-alt"></i> March 8, 2025</div>
+                                <h4>Annual Arts Festival 2025</h4>
+                                <p>Join us for a celebration of creativity featuring student art exhibits and performances.</p>
+                                <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="news-card reveal delay-3">
+                            <div class="news-img">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <div class="news-body">
+                                <div class="date"><i class="far fa-calendar-alt"></i> March 1, 2025</div>
+                                <h4>New Global Exchange Partnership</h4>
+                                <p>ADCS has partnered with schools in Japan, Germany, and Brazil for student exchange.</p>
+                                <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        CONTACT
+        ============================================================ -->
+        <div class="section-wrapper">
+            <div class="container">
+                <div class="glass-section" id="contact">
+                    <div class="section-header reveal">
+                        <div class="section-tag">Contact</div>
+                        <h2 class="section-title">
+                            Get in <span class="highlight">Touch</span>
+                        </h2>
+                        <p class="section-sub">
+                            We'd love to hear from you. Reach out to us anytime — we're here to help.
+                        </p>
+                    </div>
+                    <div class="contact-grid">
+                        <div class="contact-info reveal-left">
+                            <div class="info-item">
+                                <div class="icon-box"><i class="fas fa-map-marker-alt"></i></div>
+                                <div>
+                                    <h5>Address</h5>
+                                    <p>123 Education Boulevard,<br />Knowledge City, KC 10001</p>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="icon-box"><i class="fas fa-phone-alt"></i></div>
+                                <div>
+                                    <h5>Phone</h5>
+                                    <p>+1 (555) 123-4567<br />+1 (555) 987-6543</p>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="icon-box"><i class="fas fa-envelope"></i></div>
+                                <div>
+                                    <h5>Email</h5>
+                                    <p>info@adcs.edu<br />admissions@adcs.edu</p>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="icon-box"><i class="fas fa-clock"></i></div>
+                                <div>
+                                    <h5>Office Hours</h5>
+                                    <p>Monday – Friday: 8:00 AM – 4:30 PM<br />Saturday: 9:00 AM – 12:00 PM</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="contact-form-box reveal-right">
+                            <h3>Send Us a Message</h3>
+                            <p>We'll respond within 24 hours.</p>
+                            <form id="contactForm">
+                                <div class="form-group">
+                                    <label for="contactName">Your Name *</label>
+                                    <input type="text" id="contactName" placeholder="Enter your name" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="contactEmail">Email Address *</label>
+                                    <input type="email" id="contactEmail" placeholder="Enter your email" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="contactSubject">Subject</label>
+                                    <input type="text" id="contactSubject" placeholder="What's this regarding?" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="contactMessage">Message *</label>
+                                    <textarea id="contactMessage" placeholder="Write your message..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-gold" style="width:100%; justify-content:center;">
+                                    <i class="fas fa-paper-plane"></i> Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        FOOTER
+        ============================================================ -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <a href="#home" class="logo">
+                            <span class="logo-icon">A</span>
+                            ADCS<span>.</span>
+                        </a>
+                        <p>
+                            Aspire Dynamic Charter School — where every student discovers
+                            their passion and achieves their full potential.
+                        </p>
+                        <div class="footer-social">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-youtube"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-col">
+                        <h5>Quick Links</h5>
+                        <ul>
+                            <li><a href="#about">About Us</a></li>
+                            <li><a href="#academics">Academics</a></li>
+                            <li><a href="#admissions">Admissions</a></li>
+                            <li><a href="#faculty">Faculty</a></li>
+                            <li><a href="#news">News &amp; Events</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h5>Programs</h5>
+                        <ul>
+                            <li><a href="#">Primary School</a></li>
+                            <li><a href="#">Middle School</a></li>
+                            <li><a href="#">High School</a></li>
+                            <li><a href="#">STEM Academy</a></li>
+                            <li><a href="#">Arts Program</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h5>Support</h5>
+                        <ul>
+                            <li><a href="#">Parent Portal</a></li>
+                            <li><a href="#">Student Resources</a></li>
+                            <li><a href="#">Careers</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#contact">Contact Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <span>&copy; 2025 ADCS — Aspire Dynamic Charter School. All rights reserved.</span>
+                    <span>
+                        <a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="#">Sitemap</a>
+                    </span>
+                </div>
+            </div>
+        </footer>
+
+        <!-- ===== BACK TO TOP ===== -->
+        <button class="back-to-top" id="backToTop" aria-label="Back to top">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+
+        <!-- ===== TOAST ===== -->
+        <div class="toast" id="toast">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMessage">Welcome to ADCS!</span>
+        </div>
+
+    </div>
+    <!-- end content-wrapper -->
+
+    <!-- ============================================================
+    JAVASCRIPT
+    ============================================================ -->
+    <script>
+        // ================================================================
+        // 1. NIGHT SKY — Generate Stars
+        // ================================================================
+        (function createNightSky() {
+            const container = document.getElementById('starsContainer');
+            const starCount = 420;
+            const fragment = document.createDocumentFragment();
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3.2 + 1.2;
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const duration = 2.5 + Math.random() * 4.5;
+                const minOp = 0.10 + Math.random() * 0.25;
+                const maxOp = 0.50 + Math.random() * 0.50;
+
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = x + '%';
+                star.style.top = y + '%';
+                star.style.setProperty('--duration', duration + 's');
+                star.style.setProperty('--min-opacity', minOp);
+                star.style.setProperty('--max-opacity', maxOp);
+                star.style.animationDelay = (Math.random() * 5) + 's';
+
+                if (size > 2.5) {
+                    star.classList.add('bright');
+                } else {
+                    star.classList.add('dim');
+                }
+
+                fragment.appendChild(star);
+            }
+
+            container.appendChild(fragment);
+
+            // ================================================================
+            // 2. SHOOTING STARS
+            // ================================================================
+            const sky = document.getElementById('nightSky');
+
+            function createShootingStar() {
+                const ss = document.createElement('div');
+                ss.className = 'shooting-star';
+                const angle = -25 + Math.random() * 20;
+                const distX = -300 - Math.random() * 400;
+                const distY = 200 + Math.random() * 400;
+
+                ss.style.left = (10 + Math.random() * 70) + '%';
+                ss.style.top = (5 + Math.random() * 25) + '%';
+                ss.style.setProperty('--angle', angle + 'deg');
+                ss.style.setProperty('--dist-x', distX + 'px');
+                ss.style.setProperty('--dist-y', distY + 'px');
+                ss.style.setProperty('--shoot-duration', (2.5 + Math.random() * 2) + 's');
+                ss.style.animationDelay = (Math.random() * 8) + 's';
+
+                sky.appendChild(ss);
+
+                // Remove after animation to avoid clutter
+                setTimeout(() => {
+                    if (ss.parentNode) ss.remove();
+                }, 12000);
+            }
+
+            // Create initial shooting stars
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => createShootingStar(), i * 2500 + Math.random() * 1000);
+            }
+
+            // Continuously create new ones
+            setInterval(() => {
+                createShootingStar();
+            }, 6000 + Math.random() * 4000);
+
+        })();
+
+        // ================================================================
+        // 3. NAVBAR SCROLL EFFECT
+        // ================================================================
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 80);
+        });
+
+        // ================================================================
+        // 4. MOBILE HAMBURGER
+        // ================================================================
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('open');
+            navLinks.classList.toggle('open');
+        });
+
+        document.querySelectorAll('.nav-links > li > a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('open');
+                navLinks.classList.remove('open');
+            });
+        });
+
+        // ================================================================
+        // 5. ACTIVE NAV LINK
+        // ================================================================
+        const sections = document.querySelectorAll('section[id]');
+        const navLinksArray = document.querySelectorAll('.nav-links > li > a');
+
+        function updateActiveLink() {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 150;
+                if (window.scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navLinksArray.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        window.addEventListener('scroll', updateActiveLink);
+        window.addEventListener('load', updateActiveLink);
+
+        // ================================================================
+        // 6. BACK TO TOP
+        // ================================================================
+        const backToTop = document.getElementById('backToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ================================================================
+        // 7. SCROLL REVEAL
+        // ================================================================
+        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const delay = parseFloat(entry.target.style.transitionDelay) * 1000 || 0;
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, delay);
+                }
+            });
+        }, {
+            threshold: 0.12,
+            rootMargin: '0px 0px -40px 0px'
+        });
+
+        revealElements.forEach(el => {
+            revealObserver.observe(el);
+        });
+
+        // ================================================================
+        // 8. TOAST SYSTEM
+        // ================================================================
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        let toastTimer;
+
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        // ================================================================
+        // 9. ADMISSIONS FORM
+        // ================================================================
+        const admissionsForm = document.getElementById('admissionsForm');
+
+        admissionsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('parentEmail').value.trim();
+            const grade = document.getElementById('gradeLevel').value;
+
+            if (!name || !email || !grade) {
+                showToast('⚠️ Please fill in all required fields.');
+                return;
+            }
+
+            showToast(`✅ Thank you, ${name}! We'll contact you at ${email} within 24 hours.`);
+            admissionsForm.reset();
+        });
+
+        // ================================================================
+        // 10. CONTACT FORM
+        // ================================================================
+        const contactForm = document.getElementById('contactForm');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('contactName').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const message = document.getElementById('contactMessage').value.trim();
+
+            if (!name || !email || !message) {
+                showToast('⚠️ Please fill in all required fields.');
+                return;
+            }
+
+            showToast(`✅ Message sent! We'll reply to ${email} within 24 hours.`);
+            contactForm.reset();
+        });
+
+        // ================================================================
+        // 11. WELCOME TOAST
+        // ================================================================
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                showToast('🌙 Welcome to ADCS — where futures are written in the stars!');
+            }, 900);
+        });
+
+        // ================================================================
+        // 12. SMOOTH SCROLL
+        // ================================================================
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const target = document.querySelector(targetId);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // ================================================================
+        // 13. GALLERY CLICK
+        // ================================================================
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const overlay = this.querySelector('.overlay');
+                if (overlay) {
+                    const text = overlay.textContent.trim() || 'Gallery Image';
+                    showToast(`🖼️ ${text} — Click to view full size (demo)`);
+                } else {
+                    showToast('🖼️ Gallery image (demo)');
+                }
+            });
+        });
+
+        // ================================================================
+        // 14. READ MORE LINKS
+        // ================================================================
+        document.querySelectorAll('.read-more').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const parent = link.closest('.news-card');
+                const title = parent ? parent.querySelector('h4')?.textContent || 'Article' : 'Article';
+                showToast(`📰 Reading: "${title}" — Full article coming soon!`);
+            });
+        });
+
+        // ================================================================
+        // 15. DROPDOWN TOGGLE (mobile)
+        // ================================================================
+        document.querySelectorAll('.nav-links > li > a').forEach(link => {
+            if (link.nextElementSibling && link.nextElementSibling.classList.contains('dropdown')) {
+                link.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        e.preventDefault();
+                        const dropdown = this.nextElementSibling;
+                        const arrow = this.querySelector('.dropdown-arrow');
+                        if (dropdown) {
+                            const isOpen = dropdown.style.display === 'block';
+                            dropdown.style.display = isOpen ? 'none' : 'block';
+                            if (arrow) {
+                                arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        // ================================================================
+        // 16. PARALLAX MOON
+        // ================================================================
+        const moon = document.getElementById('moon');
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            if (moon && scrolled < window.innerHeight * 2) {
+                moon.style.transform = `translate(${scrolled * 0.02}px, ${scrolled * 0.04}px)`;
+            }
+        });
+
+        console.log('🌙 ADCS Website — Night Sky Edition');
+        console.log('✨ 420+ twinkling stars, shooting stars, and a glowing moon.');
+        console.log('🎓 Where futures are written in the stars!');
+    </script>
+
+</body>
+</html>
